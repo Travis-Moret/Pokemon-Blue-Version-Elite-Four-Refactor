@@ -2,6 +2,7 @@
 A C++ simulation of the Elite Four Battle from Pokemon Blue Version
 
 Creator: Travis Moret
+
 Date: 3/24/2020
 Class: CS 162 (Introduction to computer Science II)
 School: Oregon State University
