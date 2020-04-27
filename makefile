@@ -1,54 +1,62 @@
+# File Name: Makefile
+# Name: Travis Moret
 
-pokemon.o: Main.o Die.o Game.o Space.o IndigoPlateau.o LoreleiGym.o BrunoGym.o AgathaGym.o LanceGym.o ChampionChamber.o Pokemon.o Pikachu.o Lapras.o Machamp.o Gengar.o Dragonite.o 
-	g++ -std=c++11 Main.o Die.o Game.o Space.o IndigoPlateau.o LoreleiGym.o BrunoGym.o AgathaGym.o LanceGym.o ChampionChamber.o Pokemon.o Pikachu.o Lapras.o Machamp.o Gengar.o Dragonite.o -o pogo 
 
-Main.o: Main.cpp
-	g++ -std=c++11 -c Main.cpp
+# Compiler
+CXX = g++
 
-Die.o: Die.hpp Die.cpp
-	g++ -std=c++11 -c Die.cpp
+# Compiler Flags
+CXXFLAGS = -std=c++0x -g
 
-Game.o: Game.hpp Game.cpp
-	g++ -std=c++11 -c Game.cpp
+# Unused flags
+#CXXFLAGS += -v -O3 -pedantic-errors -Wall
 
-Space.o: Space.hpp Space.cpp
-	g++ -std=c++11 -c Space.cpp
+# Compiler Flags passed when linking
+LDFLAGS = -lboost_date_time
 
-IndigoPlateau.o: IndigoPlateau.hpp IndigoPlateau.cpp
-	g++ -std=c++11 -c IndigoPlateau.cpp
+# Compiler flags from libraries
+#LDLIBS = 
 
-LoreleiGym.o: LoreleiGym.hpp LoreleiGym.cpp
-	g++ -std=c++11 -c LoreleiGym.cpp
+# Valgrind Options
+VOPT = --tool=memcheck --leak-check=full --show-leak-kinds=all --track-origins=yes
 
-BrunoGym.o: BrunoGym.hpp BrunoGym.cpp
-	g++ -std=c++11 -c BrunoGym.cpp
+# Project Name
+PROJ = pogo
 
-AgathaGym.o: AgathaGym.hpp AgathaGym.cpp
-	g++ -std=c++11 -c AgathaGym.cpp
+# Zip Name
+ZIP = pokemon
+ 
+# Source Files
+SRCS = Main.cpp Die.cpp Game.cpp Space.cpp IndigoPlateau.cpp LoreleiGym.cpp BrunoGym.cpp AgathaGym.cpp LanceGym.cpp ChampionChamber.cpp Pokemon.cpp Pikachu.cpp Lapras.cpp Machamp.cpp Gengar.cpp Dragonite.cpp
 
-LanceGym.o: LanceGym.hpp LanceGym.cpp
-	g++ -std=c++11 -c LanceGym.cpp
+# Object Files (created from each source file)
+OBJS = $(SRCS:.cpp=.o)
 
-ChampionChamber.o: ChampionChamber.hpp ChampionChamber.cpp
-	g++ -std=c++11 -c ChampionChamber.cpp
+# Linking
+# All header files will be brought in as dependencies
+${PROJ}: ${OBJS} 
+	${CXX} ${LDFLAGS} ${OBJS} -o ${PROJ}
 
-Pokemon.o: Pokemon.hpp Pokemon.cpp
-	g++ -std=c++11 -c Pokemon.cpp
+${OBJS}: ${SRCS}  
+	${CXX} ${CXXFLAGS} -c $(@:.o=.cpp)
 
-Pikachu.o: Pikachu.hpp Pikachu.cpp
-	g++ -std=c++11 -c Pikachu.cpp
 
-Lapras.o: Lapras.hpp Lapras.cpp
-	g++ -std=c++11 -c Lapras.cpp
+# Names of tags that aren't files. 
+# Program would not run otherwise if a file by one of these names existed
+.PHONY: default debug clean zip
 
-Machamp.o: Machamp.hpp Machamp.cpp
-	g++ -std=c++11 -c Machamp.cpp
+# Commands that can be given after "make" 
 
-Gengar.o: Gengar.hpp Gengar.cpp
-	g++ -std=c++11 -c Gengar.cpp
+# Invoke to clean the files to start from scratch
+clean:
+	rm -f ${PROJ} ${OBJS}
 
-Dragonite.o: Dragonite.hpp Dragonite.cpp
-	g++ -std=c++11 -c Dragonite.cpp
+# Invoke to zip all files up or update zipped files
+zip: 
+	zip $(ZIP).zip *.cpp *.hpp makefile
 
-clean: 
-	rm *.o pogo 
+# Invoke to run valgrind debugging
+debug: $(PROJ)
+	@valgrind $(VOPT) ./$(PROJ)
+
+default: clean $(PROJ) debug
