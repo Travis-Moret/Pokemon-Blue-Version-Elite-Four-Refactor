@@ -31,7 +31,7 @@ The game is a remake of Pokemon Blue Version's Elite Four battles at the Indigea
                                                            
                                            To compile the program, use the terminal command: 
                                                             
-                                                              make pogo
+                                                             make pogo
                                                             
                                                 To run the program, use the command: 
                                                             
